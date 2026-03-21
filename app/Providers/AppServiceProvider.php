@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Database\Events\MigrationsEnded;
+use Illuminate\Support\Facades\Route;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,5 +30,10 @@ class AppServiceProvider extends ServiceProvider
                 '--reset' => true,
             ]);
         });
+
+        # Explicit bindings
+        // Route::bind('user', function ($value) {
+        //     return 12345;
+        // });
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CommentResource;
-use App\Models\Comment;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class CommentController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,69 +17,72 @@ class CommentController extends Controller
      */
     public function index(Request $request)
     {
-        $comments = Comment::query()->paginate($request->page_size ?? 20);
+        $users = User::query()->paginate($request->page_size ?? 20);
 
-        return CommentResource::collection($comments);
+        return UserResource::collection($users);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  Request  $request
-     * @return CommentResource
+     * @return UserResource
      */
     public function store(Request $request)
     {
-        $created = Comment::query()->create([
-            'body' => $request->body,
+        $created = User::query()->create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password,
         ]);
 
-        return new CommentResource($created);
+        return new UserResource($created);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  Comment  $comment
-     * @return CommentResource
+     * @param  User  $user
+     * @return UserResource
      */
-    public function show(Comment $comment)
+    public function show(User $user)
     {
-        return new CommentResource($comment);
+        return new UserResource($user);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  Request  $request
-     * @param  Comment  $comment
-     * @return CommentResource | JsonResponse
+     * @param  User  $user
+     * @return UserResource | JsonResponse
      */
-    public function update(Request $request, Comment $comment)
+    public function update(Request $request, User $user)
     {
-        $updated = $comment->update([
-            'body' => $request->body ?? $comment->body,
+        $updated = $user->update([
+            'name' => $request->name ?? $user->name,
+            'email' => $request->email ?? $user->email,
+            'password' => $request->password ?? $user->password,
         ]);
 
         if (!$updated) {
             return new JsonResponse([
-                'error' => 'Failed to update resource.'
+                'error' => 'Failed to update resource.',
             ]);
         }
 
-        return new CommentResource($comment);
+        return new UserResource($user);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Comment  $comment
+     * @param  User  $user
      * @return JsonResponse
      */
-    public function destroy(Comment $comment)
+    public function destroy(User $user)
     {
-        $deleted = $comment->forceDelete();
-
+        $deleted = $user->forceDelete();
         if (!$deleted) {
             return new JsonResponse([
                 'error' => 'Failed to delete resource.'
