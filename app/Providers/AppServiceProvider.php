@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Subscribers\Models\UserEventSubscriber;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
@@ -30,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
                 '--reset' => true,
             ]);
         });
+
+        Event::subscribe(UserEventSubscriber::class);
 
         # Explicit bindings
         // Route::bind('user', function ($value) {

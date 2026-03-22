@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Models\User\UserCreated;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Models\User;
 use App\Repositories\PostRepository;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -21,6 +23,7 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
+        event(new UserCreated(User::factory()->make()));
         $pageSize = $request->page_size ?? 20;
         $posts = Post::query()->paginate($pageSize);
 
