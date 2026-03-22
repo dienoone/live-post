@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Repositories\CommentRepository;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CommentController extends Controller
 {
+    use ApiResponse;
+
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +22,7 @@ class CommentController extends Controller
     public function index(Request $request)
     {
         $comments = Comment::query()->paginate($request->page_size ?? 20);
-        return CommentResource::collection($comments);
+        return $this->paginated(CommentResource::collection($comments));
     }
 
     /**
@@ -37,7 +40,7 @@ class CommentController extends Controller
             'post_id',
         ]));
 
-        return new CommentResource($created);
+        return $this->success(new CommentResource($created));
     }
 
     /**
@@ -48,7 +51,7 @@ class CommentController extends Controller
      */
     public function show(Comment $comment)
     {
-        return new CommentResource($comment);
+        return $this->success(new CommentResource($comment));
     }
 
     /**
@@ -66,7 +69,7 @@ class CommentController extends Controller
             'user_id',
             'post_id',
         ]));
-        return new CommentResource($comment);
+        return $this->success(new CommentResource($comment));
     }
 
     /**
@@ -78,9 +81,6 @@ class CommentController extends Controller
     public function destroy(Comment $comment, CommentRepository $repository)
     {
         $deleted = $repository->forceDelete($comment);
-
-        return new JsonResponse([
-            'data' => 'success',
-        ]);
+        return $this->success(message: 'Deleted successfully');
     }
 }

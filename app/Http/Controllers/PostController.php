@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Repositories\PostRepository;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PostController extends Controller
 {
+    use ApiResponse;
+
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +24,7 @@ class PostController extends Controller
         $pageSize = $request->page_size ?? 20;
         $posts = Post::query()->paginate($pageSize);
 
-        return PostResource::collection($posts);
+        return $this->paginated(PostResource::collection($posts));
     }
 
     /**
@@ -38,7 +41,7 @@ class PostController extends Controller
             'user_ids'
         ]));
 
-        return new PostResource($created);
+        return $this->success(new PostResource($created));
     }
 
     /**
@@ -49,7 +52,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return new PostResource($post);
+        return $this->success(new PostResource($post));
     }
 
     /**
@@ -66,7 +69,7 @@ class PostController extends Controller
             'body',
             'user_ids',
         ]));
-        return new PostResource($post);
+        return $this->success(new PostResource($post));
     }
 
     /**
@@ -78,8 +81,6 @@ class PostController extends Controller
     public function destroy(Post $post, PostRepository $repository)
     {
         $post = $repository->forceDelete($post);
-        return new JsonResponse([
-            'data' => 'success'
-        ]);
+        return $this->success(message: 'Deleted successfully');
     }
 }

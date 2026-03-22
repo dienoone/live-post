@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class UserController extends Controller
 {
+    use ApiResponse;
+
     /**
      * Display a listing of the resource.
      *
@@ -19,14 +22,13 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::query()->paginate($request->page_size ?? 20);
-
-        return UserResource::collection($users);
+        return $this->paginated(UserResource::collection($users));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param \Illuminate\Http\Request $request
      * @return UserResource
      */
     public function store(Request $request, UserRepository $repository)
@@ -36,7 +38,7 @@ class UserController extends Controller
             'email',
         ]));
 
-        return new UserResource($created);
+        return $this->success(new UserResource($created));
     }
 
     /**
@@ -47,7 +49,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return new UserResource($user);
+        return $this->success(new UserResource($user));
     }
 
     /**
@@ -64,7 +66,7 @@ class UserController extends Controller
             'email',
         ]));
 
-        return new UserResource($user);
+        return $this->success(new UserResource($user));
     }
 
     /**
@@ -76,8 +78,6 @@ class UserController extends Controller
     public function destroy(User $user, UserRepository $repository)
     {
         $deleted = $repository->forceDelete($user);
-        return new \Illuminate\Http\JsonResponse([
-            'data' => 'success',
-        ]);
+        return $this->success(message: 'Deleted successfully');
     }
 }
