@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\UserCreated;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -37,9 +36,10 @@ class UserController extends Controller
         $created = $repository->create($request->only([
             'name',
             'email',
+            'password'
         ]));
 
-        return $this->success(new UserResource($created));
+        return $this->success(new UserResource($created), status: 201);
     }
 
     /**

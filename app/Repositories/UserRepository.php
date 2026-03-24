@@ -8,6 +8,7 @@ use App\Events\Models\User\UserUpdated;
 use App\Exceptions\GeneralJsonException;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository extends BaseRepository
 {
@@ -15,10 +16,10 @@ class UserRepository extends BaseRepository
     public function create(array $attributes)
     {
         return DB::transaction(function () use ($attributes) {
-
             $created = User::query()->create([
                 'name'  => data_get($attributes, 'name'),
                 'email' => data_get($attributes, 'email'),
+                'password' => Hash::make(data_get($attributes, 'password')),
             ]);
             throw_if(!$created, GeneralJsonException::class, 'Failed to create model.');
             event(new UserCreated($created));

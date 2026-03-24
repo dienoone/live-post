@@ -40,7 +40,7 @@ class CommentController extends Controller
             'post_id',
         ]));
 
-        return $this->success(new CommentResource($created));
+        return $this->success(new CommentResource($created), status: 201);
     }
 
     /**

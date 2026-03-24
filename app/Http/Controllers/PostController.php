@@ -44,7 +44,7 @@ class PostController extends Controller
             'user_ids'
         ]));
 
-        return $this->success(new PostResource($created));
+        return $this->success(new PostResource($created), status: 201);
     }
 
     /**
@@ -84,6 +84,6 @@ class PostController extends Controller
     public function destroy(Post $post, PostRepository $repository)
     {
         $post = $repository->forceDelete($post);
-        return $this->success(message: 'Deleted successfully');
+        return $this->success(message: 'Deleted successfully', status: 204);
     }
 }
