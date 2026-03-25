@@ -11,7 +11,6 @@ Route::get('/', function () {
 
 
 if (app()->isLocal()) {
-
     Route::get('/playground', function () {
         $user = User::factory()->make();
         Mail::to($user)->send(new WelcomeMail($user));
